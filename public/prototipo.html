@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bridge Education — Prototipo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            navy: { DEFAULT: '#0A1F44', light: '#0d2754' },
+            electric: { DEFAULT: '#2F80ED', hover: '#2570D3' },
+          },
+          fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+        },
+      },
+    };
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .view { display: none; }
+    .view.active { display: flex; }
+    .nav-tab.active { background: #2F80ED; color: white; }
+    .nav-tab { cursor: pointer; }
+    .sidebar-link.active { background: #2F80ED; color: white !important; }
+    .sidebar-link { transition: all 0.15s; }
+    .sidebar-link:hover:not(.active) { background: rgba(255,255,255,0.08); color: white; }
+  </style>
+</head>
+<body class="bg-gray-100">
+
+<!-- ===== NAV TABS ===== -->
+<div class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 shadow-sm">
+  <div class="flex items-center gap-1 px-4 py-2 overflow-x-auto">
+    <span class="text-xs text-gray-400 mr-2 shrink-0">Vista:</span>
+    <button onclick="show('login')" id="tab-login" class="nav-tab active text-xs px-3 py-1.5 rounded-lg font-medium text-gray-600 shrink-0">Login</button>
+    <button onclick="show('dashboard')" id="tab-dashboard" class="nav-tab text-xs px-3 py-1.5 rounded-lg font-medium text-gray-600 shrink-0">Dashboard</button>
+    <button onclick="show('materias')" id="tab-materias" class="nav-tab text-xs px-3 py-1.5 rounded-lg font-medium text-gray-600 shrink-0">Materias</button>
+    <button onclick="show('banco')" id="tab-banco" class="nav-tab text-xs px-3 py-1.5 rounded-lg font-medium text-gray-600 shrink-0">Banco</button>
+    <button onclick="show('admin')" id="tab-admin" class="nav-tab text-xs px-3 py-1.5 rounded-lg font-medium text-gray-600 shrink-0">Admin</button>
+    <button onclick="show('restringido')" id="tab-restringido" class="nav-tab text-xs px-3 py-1.5 rounded-lg font-medium text-gray-600 shrink-0">Acceso restringido</button>
+  </div>
+</div>
+
+<div class="pt-12">
+
+<!-- ===== SVG ARCH LOGO (inline, reusable) ===== -->
+<svg id="arch-white" style="display:none">
+  <defs>
+    <g id="arch-paths">
+      <!-- 7 dovelas, radio exterior 220, interior 130, gap 1.4° -->
+    </g>
+  </defs>
+</svg>
+
+<!-- ================================================================
+     LOGIN
+     ================================================================ -->
+<div id="view-login" class="view active min-h-screen bg-navy items-center justify-center px-4" style="min-height:calc(100vh - 48px)">
+  <div class="w-full max-w-sm">
+    <!-- Logo -->
+    <div class="flex flex-col items-center mb-10">
+      <svg width="110" height="55" viewBox="25 25 450 230" fill="white" aria-label="Bridge Education">
+        <path d="M 30.000 250.000 A 220 220 0 0 1 49.945 158.453 L 129.590 195.268 A 130 130 0 0 0 120.000 250.000 Z"/>
+        <path d="M 54.088 154.086 A 220 220 0 0 1 128.254 86.266 L 148.447 171.863 A 130 130 0 0 0 83.734 220.051 Z"/>
+        <path d="M 132.396 82.101 A 220 220 0 0 1 226.208 39.969 L 227.574 135.271 A 130 130 0 0 0 165.234 161.237 Z"/>
+        <path d="M 230.350 39.264 A 220 220 0 0 1 269.650 39.264 L 272.426 134.507 A 130 130 0 0 0 227.574 134.507 Z"/>
+        <path d="M 273.792 39.969 A 220 220 0 0 1 367.604 82.101 L 334.766 161.237 A 130 130 0 0 0 272.426 135.271 Z"/>
+        <path d="M 371.746 86.266 A 220 220 0 0 1 445.912 154.086 L 416.266 220.051 A 130 130 0 0 0 351.553 171.863 Z"/>
+        <path d="M 450.055 158.453 A 220 220 0 0 1 470.000 250.000 L 380.000 250.000 A 130 130 0 0 0 370.410 195.268 Z"/>
+      </svg>
+      <h1 class="mt-5 text-2xl font-semibold text-white tracking-tight">Bridge Education</h1>
+      <p class="mt-2 text-sm text-white/50 text-center">Plataforma académica del Colegio Cumbres de Medellín</p>
+    </div>
+
+    <!-- Card -->
+    <div class="bg-white rounded-2xl p-8">
+      <h2 class="text-base font-semibold text-gray-900 mb-1">Acceso a la plataforma</h2>
+      <p class="text-sm text-gray-500 mb-6">Usa tu cuenta institucional <span class="font-medium text-gray-700">@cumbres.edu.co</span>.</p>
+
+      <button onclick="show('dashboard')"
+        class="w-full flex items-center justify-center gap-3 bg-navy text-white px-4 py-3 rounded-xl font-medium text-sm hover:opacity-90 transition-opacity">
+        <svg class="w-5 h-5" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Continuar con Google
+      </button>
+
+      <p class="mt-5 text-xs text-center text-gray-400">Solo cuentas del dominio <span class="font-medium">@cumbres.edu.co</span> tienen acceso.</p>
+    </div>
+
+    <p class="mt-6 text-center text-xs text-white/25">Bridge Education &copy; 2025</p>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     DASHBOARD
+     ================================================================ -->
+<div id="view-dashboard" class="view min-h-screen bg-gray-50" style="min-height:calc(100vh - 48px)">
+  <!-- Sidebar -->
+  <aside class="w-64 min-h-screen bg-navy flex flex-col border-r border-white/10 shrink-0 hidden md:flex" style="min-height:calc(100vh - 48px)">
+    <div class="px-6 py-6 border-b border-white/10">
+      <div class="flex items-center gap-3">
+        <svg width="54" height="28" viewBox="25 25 450 230" fill="white">
+          <path d="M 30.000 250.000 A 220 220 0 0 1 49.945 158.453 L 129.590 195.268 A 130 130 0 0 0 120.000 250.000 Z"/>
+          <path d="M 54.088 154.086 A 220 220 0 0 1 128.254 86.266 L 148.447 171.863 A 130 130 0 0 0 83.734 220.051 Z"/>
+          <path d="M 132.396 82.101 A 220 220 0 0 1 226.208 39.969 L 227.574 135.271 A 130 130 0 0 0 165.234 161.237 Z"/>
+          <path d="M 230.350 39.264 A 220 220 0 0 1 269.650 39.264 L 272.426 134.507 A 130 130 0 0 0 227.574 134.507 Z"/>
+          <path d="M 273.792 39.969 A 220 220 0 0 1 367.604 82.101 L 334.766 161.237 A 130 130 0 0 0 272.426 135.271 Z"/>
+          <path d="M 371.746 86.266 A 220 220 0 0 1 445.912 154.086 L 416.266 220.051 A 130 130 0 0 0 351.553 171.863 Z"/>
+          <path d="M 450.055 158.453 A 220 220 0 0 1 470.000 250.000 L 380.000 250.000 A 130 130 0 0 0 370.410 195.268 Z"/>
+        </svg>
+        <div>
+          <p class="text-xs font-semibold text-white tracking-widest uppercase">Bridge</p>
+          <p class="text-xs text-white/50">Education</p>
+        </div>
+      </div>
+    </div>
+    <nav class="flex-1 px-3 py-4 space-y-0.5">
+      <a onclick="show('dashboard')" class="sidebar-link active flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/60 cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Inicio
+      </a>
+      <a onclick="show('materias')" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/60 cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+        Mis materias
+      </a>
+      <a onclick="show('banco')" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/60 cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Banco de preguntas
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/60 cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Tutorías
+      </a>
+      <a class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/60 cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        Progreso
+      </a>
+      <div class="pt-4 pb-1"><p class="px-3 text-xs text-white/30 tracking-widest uppercase">Administración</p></div>
+      <a onclick="show('admin')" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/60 cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Panel de administración
+      </a>
+    </nav>
+    <div class="px-4 py-4 border-t border-white/10">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-electric/20 flex items-center justify-center text-electric text-sm font-semibold">S</div>
+        <div>
+          <p class="text-sm text-white">Santiago Pérez</p>
+          <p class="text-xs text-white/40">11°</p>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="flex-1 flex flex-col min-w-0">
+    <!-- Header -->
+    <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 shrink-0">
+      <div>
+        <p class="text-base text-gray-900">Buenos días, <span class="font-semibold">Santiago.</span></p>
+        <p class="text-xs text-gray-400">11°</p>
+      </div>
+      <button onclick="show('login')" class="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        Cerrar sesión
+      </button>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-1 p-6 overflow-y-auto">
+      <div class="max-w-4xl mx-auto space-y-8">
+
+        <!-- Stats -->
+        <section>
+          <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Resumen</h2>
+          <div class="grid grid-cols-3 gap-4">
+            <div class="bg-white rounded-xl p-5 flex items-start gap-4">
+              <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Temas completados</p>
+                <p class="text-2xl font-semibold text-gray-900 mt-0.5">14</p>
+                <p class="text-xs text-gray-400 mt-0.5">módulos terminados</p>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl p-5 flex items-start gap-4">
+              <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Banco de preguntas</p>
+                <p class="text-2xl font-semibold text-gray-900 mt-0.5">78%</p>
+                <p class="text-xs text-gray-400 mt-0.5">39 de 50 correctas</p>
+              </div>
+            </div>
+            <div class="bg-white rounded-xl p-5 flex items-start gap-4">
+              <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500">Materias activas</p>
+                <p class="text-2xl font-semibold text-gray-900 mt-0.5">5</p>
+                <p class="text-xs text-gray-400 mt-0.5">disponibles este periodo</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Materias -->
+        <section>
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Mis materias</h2>
+            <a onclick="show('materias')" class="text-xs text-blue-600 hover:underline cursor-pointer">Ver todas</a>
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <!-- Materia 1 -->
+            <div onclick="show('materias')" class="bg-white rounded-xl p-5 hover:shadow-md transition-shadow cursor-pointer">
+              <div class="flex items-start justify-between mb-3">
+                <div class="w-3 h-3 rounded-full mt-0.5" style="background:#2F80ED"></div>
+                <span class="text-xs text-gray-400">11°</span>
+              </div>
+              <h3 class="text-sm font-semibold text-gray-900 mb-1">Matemáticas</h3>
+              <p class="text-xs text-gray-500 mb-3">Álgebra, geometría y cálculo básico</p>
+              <div>
+                <div class="flex justify-between mb-1"><span class="text-xs text-gray-500">8/12 módulos</span><span class="text-xs font-medium text-gray-700">67%</span></div>
+                <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden"><div class="h-full bg-blue-500 rounded-full" style="width:67%"></div></div>
+              </div>
+            </div>
+            <!-- Materia 2 -->
+            <div class="bg-white rounded-xl p-5 hover:shadow-md transition-shadow cursor-pointer">
+              <div class="flex items-start justify-between mb-3">
+                <div class="w-3 h-3 rounded-full mt-0.5" style="background:#0A1F44"></div>
+                <span class="text-xs text-gray-400">11°</span>
+              </div>
+              <h3 class="text-sm font-semibold text-gray-900 mb-1">Física</h3>
+              <p class="text-xs text-gray-500 mb-3">Mecánica, termodinámica y electromagnetismo</p>
+              <div>
+                <div class="flex justify-between mb-1"><span class="text-xs text-gray-500">3/10 módulos</span><span class="text-xs font-medium text-gray-700">30%</span></div>
+                <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:30%;background:#0A1F44"></div></div>
+              </div>
+            </div>
+            <!-- Materia 3 -->
+            <div class="bg-white rounded-xl p-5 hover:shadow-md transition-shadow cursor-pointer">
+              <div class="flex items-start justify-between mb-3">
+                <div class="w-3 h-3 rounded-full mt-0.5" style="background:#1B4F72"></div>
+                <span class="text-xs text-gray-400">11°</span>
+              </div>
+              <h3 class="text-sm font-semibold text-gray-900 mb-1">Química</h3>
+              <p class="text-xs text-gray-500 mb-3">Química orgánica e inorgánica</p>
+              <div>
+                <div class="flex justify-between mb-1"><span class="text-xs text-gray-500">2/8 módulos</span><span class="text-xs font-medium text-gray-700">25%</span></div>
+                <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:25%;background:#1B4F72"></div></div>
+              </div>
+            </div>
+            <!-- Materia 4 -->
+            <div class="bg-white rounded-xl p-5 hover:shadow-md transition-shadow cursor-pointer">
+              <div class="flex items-start justify-between mb-3">
+                <div class="w-3 h-3 rounded-full mt-0.5" style="background:#154360"></div>
+                <span class="text-xs text-gray-400">11°</span>
+              </div>
+              <h3 class="text-sm font-semibold text-gray-900 mb-1">Español</h3>
+              <p class="text-xs text-gray-500 mb-3">Comprensión lectora y producción textual</p>
+              <div>
+                <div class="flex justify-between mb-1"><span class="text-xs text-gray-500">1/6 módulos</span><span class="text-xs font-medium text-gray-700">17%</span></div>
+                <div class="h-1.5 bg-gray-100 rounded-full overflow-hidden"><div class="h-full rounded-full" style="width:17%;background:#154360"></div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tutorías -->
+        <section>
+          <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Tutorías</h2>
+          <div class="bg-white rounded-xl p-5 flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div class="w-10 h-10 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-gray-900">Agenda una sesión presencial</p>
+                <p class="text-xs text-gray-500 mt-0.5">Las tutorías se coordinan directamente por WhatsApp.</p>
+              </div>
+            </div>
+            <span class="text-sm text-blue-600 hover:underline cursor-pointer">Ver más</span>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     MATERIAS
+     ================================================================ -->
+<div id="view-materias" class="view min-h-screen bg-gray-50" style="min-height:calc(100vh - 48px)">
+  <aside class="w-64 min-h-screen bg-navy flex flex-col border-r border-white/10 shrink-0 hidden md:flex" style="min-height:calc(100vh - 48px)">
+    <div class="px-6 py-6 border-b border-white/10">
+      <div class="flex items-center gap-3">
+        <svg width="54" height="28" viewBox="25 25 450 230" fill="white"><path d="M 30.000 250.000 A 220 220 0 0 1 49.945 158.453 L 129.590 195.268 A 130 130 0 0 0 120.000 250.000 Z"/><path d="M 54.088 154.086 A 220 220 0 0 1 128.254 86.266 L 148.447 171.863 A 130 130 0 0 0 83.734 220.051 Z"/><path d="M 132.396 82.101 A 220 220 0 0 1 226.208 39.969 L 227.574 135.271 A 130 130 0 0 0 165.234 161.237 Z"/><path d="M 230.350 39.264 A 220 220 0 0 1 269.650 39.264 L 272.426 134.507 A 130 130 0 0 0 227.574 134.507 Z"/><path d="M 273.792 39.969 A 220 220 0 0 1 367.604 82.101 L 334.766 161.237 A 130 130 0 0 0 272.426 135.271 Z"/><path d="M 371.746 86.266 A 220 220 0 0 1 445.912 154.086 L 416.266 220.051 A 130 130 0 0 0 351.553 171.863 Z"/><path d="M 450.055 158.453 A 220 220 0 0 1 470.000 250.000 L 380.000 250.000 A 130 130 0 0 0 370.410 195.268 Z"/></svg>
+        <div><p class="text-xs font-semibold text-white tracking-widest uppercase">Bridge</p><p class="text-xs text-white/50">Education</p></div>
+      </div>
+    </div>
+    <nav class="flex-1 px-3 py-4 space-y-0.5">
+      <a onclick="show('dashboard')" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/60 cursor-pointer"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Inicio</a>
+      <a onclick="show('materias')" class="sidebar-link active flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white cursor-pointer"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Mis materias</a>
+      <a onclick="show('banco')" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/60 cursor-pointer"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Banco de preguntas</a>
+    </nav>
+    <div class="px-4 py-4 border-t border-white/10"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-electric/20 flex items-center justify-center text-blue-400 text-sm font-semibold">S</div><div><p class="text-sm text-white">Santiago Pérez</p><p class="text-xs text-white/40">11°</p></div></div></div>
+  </aside>
+  <div class="flex-1 flex flex-col">
+    <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 shrink-0">
+      <h1 class="text-base font-semibold text-gray-900">Mis materias</h1>
+      <button onclick="show('login')" class="text-sm text-gray-500 flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>Cerrar sesión</button>
+    </header>
+    <main class="flex-1 p-6">
+      <div class="max-w-4xl mx-auto">
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-white rounded-xl p-5"><div class="flex justify-between mb-3"><div class="w-3 h-3 rounded-full" style="background:#2F80ED"></div><span class="text-xs text-gray-400">11°</span></div><h2 class="text-sm font-semibold mb-1">Matemáticas</h2><p class="text-xs text-gray-500 mb-3">Álgebra, geometría y cálculo básico</p><div class="flex justify-between mb-1"><span class="text-xs text-gray-500">8/12 módulos</span><span class="text-xs font-medium">67%</span></div><div class="h-1.5 bg-gray-100 rounded-full"><div class="h-full bg-blue-500 rounded-full" style="width:67%"></div></div></div>
+          <div class="bg-white rounded-xl p-5"><div class="flex justify-between mb-3"><div class="w-3 h-3 rounded-full" style="background:#0A1F44"></div><span class="text-xs text-gray-400">11°</span></div><h2 class="text-sm font-semibold mb-1">Física</h2><p class="text-xs text-gray-500 mb-3">Mecánica, termodinámica y electromagnetismo</p><div class="flex justify-between mb-1"><span class="text-xs text-gray-500">3/10 módulos</span><span class="text-xs font-medium">30%</span></div><div class="h-1.5 bg-gray-100 rounded-full"><div class="h-full rounded-full" style="width:30%;background:#0A1F44"></div></div></div>
+          <div class="bg-white rounded-xl p-5"><div class="flex justify-between mb-3"><div class="w-3 h-3 rounded-full" style="background:#1B4F72"></div><span class="text-xs text-gray-400">11°</span></div><h2 class="text-sm font-semibold mb-1">Química</h2><p class="text-xs text-gray-500 mb-3">Química orgánica e inorgánica</p><div class="flex justify-between mb-1"><span class="text-xs text-gray-500">2/8 módulos</span><span class="text-xs font-medium">25%</span></div><div class="h-1.5 bg-gray-100 rounded-full"><div class="h-full rounded-full" style="width:25%;background:#1B4F72"></div></div></div>
+          <div class="bg-white rounded-xl p-5"><div class="flex justify-between mb-3"><div class="w-3 h-3 rounded-full" style="background:#154360"></div><span class="text-xs text-gray-400">11°</span></div><h2 class="text-sm font-semibold mb-1">Español</h2><p class="text-xs text-gray-500 mb-3">Comprensión lectora y producción textual</p><div class="flex justify-between mb-1"><span class="text-xs text-gray-500">1/6 módulos</span><span class="text-xs font-medium">17%</span></div><div class="h-1.5 bg-gray-100 rounded-full"><div class="h-full rounded-full" style="width:17%;background:#154360"></div></div></div>
+          <div class="bg-white rounded-xl p-5"><div class="flex justify-between mb-3"><div class="w-3 h-3 rounded-full" style="background:#1A5276"></div><span class="text-xs text-gray-400">11°</span></div><h2 class="text-sm font-semibold mb-1">Inglés</h2><p class="text-xs text-gray-500 mb-3">Reading, writing and grammar</p><div class="flex justify-between mb-1"><span class="text-xs text-gray-500">0/8 módulos</span><span class="text-xs font-medium">0%</span></div><div class="h-1.5 bg-gray-100 rounded-full"><div class="h-full rounded-full" style="width:0%;background:#1A5276"></div></div></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     BANCO DE PREGUNTAS
+     ================================================================ -->
+<div id="view-banco" class="view min-h-screen bg-gray-50" style="min-height:calc(100vh - 48px)">
+  <aside class="w-64 min-h-screen bg-navy flex flex-col border-r border-white/10 shrink-0 hidden md:flex" style="min-height:calc(100vh - 48px)">
+    <div class="px-6 py-6 border-b border-white/10"><div class="flex items-center gap-3"><svg width="54" height="28" viewBox="25 25 450 230" fill="white"><path d="M 30.000 250.000 A 220 220 0 0 1 49.945 158.453 L 129.590 195.268 A 130 130 0 0 0 120.000 250.000 Z"/><path d="M 54.088 154.086 A 220 220 0 0 1 128.254 86.266 L 148.447 171.863 A 130 130 0 0 0 83.734 220.051 Z"/><path d="M 132.396 82.101 A 220 220 0 0 1 226.208 39.969 L 227.574 135.271 A 130 130 0 0 0 165.234 161.237 Z"/><path d="M 230.350 39.264 A 220 220 0 0 1 269.650 39.264 L 272.426 134.507 A 130 130 0 0 0 227.574 134.507 Z"/><path d="M 273.792 39.969 A 220 220 0 0 1 367.604 82.101 L 334.766 161.237 A 130 130 0 0 0 272.426 135.271 Z"/><path d="M 371.746 86.266 A 220 220 0 0 1 445.912 154.086 L 416.266 220.051 A 130 130 0 0 0 351.553 171.863 Z"/><path d="M 450.055 158.453 A 220 220 0 0 1 470.000 250.000 L 380.000 250.000 A 130 130 0 0 0 370.410 195.268 Z"/></svg><div><p class="text-xs font-semibold text-white tracking-widest uppercase">Bridge</p><p class="text-xs text-white/50">Education</p></div></div></div>
+    <nav class="flex-1 px-3 py-4 space-y-0.5">
+      <a onclick="show('dashboard')" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/60 cursor-pointer"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>Inicio</a>
+      <a onclick="show('materias')" class="sidebar-link flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/60 cursor-pointer"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>Mis materias</a>
+      <a onclick="show('banco')" class="sidebar-link active flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white cursor-pointer"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>Banco de preguntas</a>
+    </nav>
+    <div class="px-4 py-4 border-t border-white/10"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-blue-900 flex items-center justify-center text-blue-400 text-sm font-semibold">S</div><div><p class="text-sm text-white">Santiago Pérez</p><p class="text-xs text-white/40">11°</p></div></div></div>
+  </aside>
+  <div class="flex-1 flex flex-col">
+    <header class="h-16 bg-white border-b border-gray-100 flex items-center px-6"><h1 class="text-base font-semibold text-gray-900">Banco de preguntas</h1></header>
+    <main class="flex-1 p-6">
+      <div class="max-w-2xl mx-auto">
+        <p class="text-sm text-gray-500 mb-6">Selecciona una materia para practicar.</p>
+        <!-- Pregunta demo interactiva -->
+        <div class="bg-white rounded-xl p-6 mb-4">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">Matemáticas</span>
+            <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">1° período</span>
+            <span class="text-xs text-gray-400 ml-auto">Pregunta 3 de 20</span>
+          </div>
+          <p class="text-sm font-medium text-gray-900 mb-5">¿Cuál es el resultado de resolver la ecuación <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">2x + 6 = 14</code>?</p>
+          <div class="space-y-3" id="opciones">
+            <button onclick="responder(this,'wrong')" class="w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 text-left hover:border-blue-300 hover:bg-blue-50 transition-colors text-sm">
+              <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-semibold shrink-0">A</span>
+              <span>x = 3</span>
+            </button>
+            <button onclick="responder(this,'correct')" class="w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 text-left hover:border-blue-300 hover:bg-blue-50 transition-colors text-sm">
+              <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-semibold shrink-0">B</span>
+              <span>x = 4</span>
+            </button>
+            <button onclick="responder(this,'wrong')" class="w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 text-left hover:border-blue-300 hover:bg-blue-50 transition-colors text-sm">
+              <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-semibold shrink-0">C</span>
+              <span>x = 5</span>
+            </button>
+            <button onclick="responder(this,'wrong')" class="w-full flex items-center gap-3 p-3 rounded-lg border border-gray-200 text-left hover:border-blue-300 hover:bg-blue-50 transition-colors text-sm">
+              <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-semibold shrink-0">D</span>
+              <span>x = 7</span>
+            </button>
+          </div>
+          <div id="feedback" class="hidden mt-4 p-3 rounded-lg text-sm"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     ADMIN
+     ================================================================ -->
+<div id="view-admin" class="view min-h-screen bg-gray-50" style="min-height:calc(100vh - 48px)">
+  <aside class="w-60 min-h-screen bg-navy flex flex-col border-r border-white/10 shrink-0 hidden md:flex" style="min-height:calc(100vh - 48px)">
+    <div class="px-5 py-6 border-b border-white/10">
+      <div class="flex items-center gap-3">
+        <svg width="46" height="24" viewBox="25 25 450 230" fill="white"><path d="M 30.000 250.000 A 220 220 0 0 1 49.945 158.453 L 129.590 195.268 A 130 130 0 0 0 120.000 250.000 Z"/><path d="M 54.088 154.086 A 220 220 0 0 1 128.254 86.266 L 148.447 171.863 A 130 130 0 0 0 83.734 220.051 Z"/><path d="M 132.396 82.101 A 220 220 0 0 1 226.208 39.969 L 227.574 135.271 A 130 130 0 0 0 165.234 161.237 Z"/><path d="M 230.350 39.264 A 220 220 0 0 1 269.650 39.264 L 272.426 134.507 A 130 130 0 0 0 227.574 134.507 Z"/><path d="M 273.792 39.969 A 220 220 0 0 1 367.604 82.101 L 334.766 161.237 A 130 130 0 0 0 272.426 135.271 Z"/><path d="M 371.746 86.266 A 220 220 0 0 1 445.912 154.086 L 416.266 220.051 A 130 130 0 0 0 351.553 171.863 Z"/><path d="M 450.055 158.453 A 220 220 0 0 1 470.000 250.000 L 380.000 250.000 A 130 130 0 0 0 370.410 195.268 Z"/></svg>
+        <div><p class="text-xs font-semibold text-white tracking-widest uppercase">Bridge</p><p class="text-xs text-white/40">Admin</p></div>
+      </div>
+    </div>
+    <nav class="flex-1 px-3 py-4 space-y-0.5">
+      <a class="sidebar-link active flex items-center px-3 py-2.5 rounded-lg text-sm text-white cursor-pointer">Panel</a>
+      <a class="sidebar-link flex items-center px-3 py-2.5 rounded-lg text-sm text-white/60 cursor-pointer">Materias</a>
+      <a class="sidebar-link flex items-center px-3 py-2.5 rounded-lg text-sm text-white/60 cursor-pointer">Módulos</a>
+      <a class="sidebar-link flex items-center px-3 py-2.5 rounded-lg text-sm text-white/60 cursor-pointer">Preguntas</a>
+      <a class="sidebar-link flex items-center px-3 py-2.5 rounded-lg text-sm text-white/60 cursor-pointer">Progreso</a>
+      <div class="pt-4">
+        <a onclick="show('dashboard')" class="flex items-center gap-2 px-3 py-2 text-xs text-white/40 hover:text-white/70 cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+          Vista estudiante
+        </a>
+      </div>
+    </nav>
+    <div class="px-4 py-4 border-t border-white/10">
+      <p class="text-xs text-white/40">Cristóbal</p>
+      <p class="text-xs text-blue-400 mt-0.5">Administrador</p>
+    </div>
+  </aside>
+
+  <div class="flex-1 flex flex-col">
+    <header class="h-16 bg-white border-b border-gray-100 flex items-center justify-between px-6 shrink-0">
+      <h1 class="text-base font-semibold text-gray-900">Administración</h1>
+      <button onclick="show('login')" class="text-sm text-gray-500 flex items-center gap-2"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>Cerrar sesión</button>
+    </header>
+    <main class="flex-1 p-6">
+      <div class="max-w-4xl mx-auto space-y-8">
+        <!-- Stats -->
+        <section>
+          <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Estadísticas generales</h2>
+          <div class="grid grid-cols-5 gap-4">
+            <div class="bg-white rounded-xl p-4 text-center"><p class="text-3xl font-bold text-navy">48</p><p class="text-xs text-gray-500 mt-1">Estudiantes registrados</p></div>
+            <div class="bg-white rounded-xl p-4 text-center"><p class="text-3xl font-bold text-navy">5</p><p class="text-xs text-gray-500 mt-1">Materias activas</p></div>
+            <div class="bg-white rounded-xl p-4 text-center"><p class="text-3xl font-bold text-navy">36</p><p class="text-xs text-gray-500 mt-1">Módulos publicados</p></div>
+            <div class="bg-white rounded-xl p-4 text-center"><p class="text-3xl font-bold text-navy">120</p><p class="text-xs text-gray-500 mt-1">Preguntas en banco</p></div>
+            <div class="bg-white rounded-xl p-4 text-center"><p class="text-3xl font-bold text-navy">312</p><p class="text-xs text-gray-500 mt-1">Módulos completados</p></div>
+          </div>
+        </section>
+
+        <!-- Acciones rápidas -->
+        <section>
+          <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Acciones rápidas</h2>
+          <div class="grid grid-cols-2 gap-4">
+            <div class="bg-white rounded-xl p-5 flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer">
+              <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg></div>
+              <div><p class="text-sm font-semibold text-gray-900">Agregar materia</p><p class="text-xs text-gray-500">Crea o edita una materia.</p></div>
+            </div>
+            <div class="bg-white rounded-xl p-5 flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer">
+              <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg></div>
+              <div><p class="text-sm font-semibold text-gray-900">Agregar módulo</p><p class="text-xs text-gray-500">Sube un video, resumen o taller.</p></div>
+            </div>
+            <div class="bg-white rounded-xl p-5 flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer">
+              <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg></div>
+              <div><p class="text-sm font-semibold text-gray-900">Agregar pregunta</p><p class="text-xs text-gray-500">Añade preguntas al banco.</p></div>
+            </div>
+            <div class="bg-white rounded-xl p-5 flex items-center gap-4 hover:shadow-md transition-shadow cursor-pointer">
+              <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg></div>
+              <div><p class="text-sm font-semibold text-gray-900">Ver progreso</p><p class="text-xs text-gray-500">Consulta el avance por estudiante.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Tabla progreso -->
+        <section>
+          <h2 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4">Progreso reciente</h2>
+          <div class="bg-white rounded-xl overflow-hidden">
+            <table class="w-full text-sm">
+              <thead class="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+                <tr><th class="px-6 py-3 text-left">Estudiante</th><th class="px-6 py-3 text-left">Grado</th><th class="px-6 py-3 text-left">Módulos</th><th class="px-6 py-3 text-left">Banco</th><th class="px-6 py-3 text-left">Progreso</th></tr>
+              </thead>
+              <tbody class="divide-y divide-gray-50">
+                <tr class="hover:bg-gray-50"><td class="px-6 py-4"><p class="font-medium">Santiago Pérez</p><p class="text-xs text-gray-400">santiago@cumbres.edu.co</p></td><td class="px-6 py-4 text-gray-600">11°</td><td class="px-6 py-4">14/36</td><td class="px-6 py-4 text-green-700 font-medium">78%</td><td class="px-6 py-4"><div class="w-24 h-1.5 bg-gray-100 rounded-full"><div class="h-full bg-blue-500 rounded-full" style="width:39%"></div></div><span class="text-xs text-gray-400">39%</span></td></tr>
+                <tr class="hover:bg-gray-50"><td class="px-6 py-4"><p class="font-medium">Valentina Gómez</p><p class="text-xs text-gray-400">valentina@cumbres.edu.co</p></td><td class="px-6 py-4 text-gray-600">11°</td><td class="px-6 py-4">22/36</td><td class="px-6 py-4 text-green-700 font-medium">85%</td><td class="px-6 py-4"><div class="w-24 h-1.5 bg-gray-100 rounded-full"><div class="h-full bg-blue-500 rounded-full" style="width:61%"></div></div><span class="text-xs text-gray-400">61%</span></td></tr>
+                <tr class="hover:bg-gray-50"><td class="px-6 py-4"><p class="font-medium">Andrés Martínez</p><p class="text-xs text-gray-400">andres@cumbres.edu.co</p></td><td class="px-6 py-4 text-gray-600">11°</td><td class="px-6 py-4">5/36</td><td class="px-6 py-4 text-yellow-700 font-medium">52%</td><td class="px-6 py-4"><div class="w-24 h-1.5 bg-gray-100 rounded-full"><div class="h-full bg-blue-500 rounded-full" style="width:14%"></div></div><span class="text-xs text-gray-400">14%</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+</div>
+
+
+<!-- ================================================================
+     ACCESO RESTRINGIDO
+     ================================================================ -->
+<div id="view-restringido" class="view min-h-screen bg-navy items-center justify-center px-4 text-center" style="min-height:calc(100vh - 48px)">
+  <div class="max-w-sm w-full">
+    <svg width="110" height="55" viewBox="25 25 450 230" fill="white" class="mx-auto"><path d="M 30.000 250.000 A 220 220 0 0 1 49.945 158.453 L 129.590 195.268 A 130 130 0 0 0 120.000 250.000 Z"/><path d="M 54.088 154.086 A 220 220 0 0 1 128.254 86.266 L 148.447 171.863 A 130 130 0 0 0 83.734 220.051 Z"/><path d="M 132.396 82.101 A 220 220 0 0 1 226.208 39.969 L 227.574 135.271 A 130 130 0 0 0 165.234 161.237 Z"/><path d="M 230.350 39.264 A 220 220 0 0 1 269.650 39.264 L 272.426 134.507 A 130 130 0 0 0 227.574 134.507 Z"/><path d="M 273.792 39.969 A 220 220 0 0 1 367.604 82.101 L 334.766 161.237 A 130 130 0 0 0 272.426 135.271 Z"/><path d="M 371.746 86.266 A 220 220 0 0 1 445.912 154.086 L 416.266 220.051 A 130 130 0 0 0 351.553 171.863 Z"/><path d="M 450.055 158.453 A 220 220 0 0 1 470.000 250.000 L 380.000 250.000 A 130 130 0 0 0 370.410 195.268 Z"/></svg>
+    <h1 class="mt-8 text-xl font-semibold text-white">Acceso restringido</h1>
+    <p class="mt-3 text-sm text-white/60 leading-relaxed">Esta plataforma es exclusiva para estudiantes y docentes del Colegio Cumbres de Medellín. Solo los correos con dominio <span class="text-white font-medium">@cumbres.edu.co</span> pueden ingresar.</p>
+    <div class="mt-8">
+      <button onclick="show('login')" class="inline-block bg-blue-600 text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors">Volver al inicio</button>
+    </div>
+    <p class="mt-8 text-xs text-white/25">Si crees que esto es un error, contacta a un administrador.</p>
+  </div>
+</div>
+
+</div><!-- end pt-12 -->
+
+<script>
+function show(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  const tab = document.getElementById('tab-' + id);
+  if (tab) tab.classList.add('active');
+}
+
+function responder(btn, tipo) {
+  const botones = document.querySelectorAll('#opciones button');
+  botones.forEach(b => { b.disabled = true; b.style.cursor = 'default'; });
+  const fb = document.getElementById('feedback');
+  fb.classList.remove('hidden');
+  if (tipo === 'correct') {
+    btn.classList.add('border-green-500', 'bg-green-50');
+    btn.querySelector('span:first-child').classList.add('bg-green-100', 'text-green-700');
+    fb.className = 'mt-4 p-3 rounded-lg text-sm bg-green-50 border border-green-100 text-green-800';
+    fb.innerHTML = '<strong>Correcto.</strong> 2x + 6 = 14 → 2x = 8 → x = 4.';
+  } else {
+    btn.classList.add('border-red-300', 'bg-red-50');
+    btn.querySelector('span:first-child').classList.add('bg-red-100', 'text-red-600');
+    botones[1].classList.add('border-green-500', 'bg-green-50');
+    botones[1].querySelector('span:first-child').classList.add('bg-green-100', 'text-green-700');
+    fb.className = 'mt-4 p-3 rounded-lg text-sm bg-red-50 border border-red-100 text-red-800';
+    fb.innerHTML = '<strong>Incorrecto.</strong> La respuesta correcta es B: x = 4. → 2(4) + 6 = 14.';
+  }
+}
+</script>
+</body>
+</html>
