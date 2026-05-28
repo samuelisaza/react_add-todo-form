@@ -1,14 +1,32 @@
-.idea
-.vscode
-build
-dist
+# Dependencies
 node_modules
-.DS_Store
+.pnp
+.pnp.js
 
+# Next.js
+.next/
+out/
+build/
+dist/
+
+# Environment
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Debug
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Editor
+.idea
+.vscode
+.DS_Store
+
+# Testing
 raw_reports
 reports
 cypress/screenshots
